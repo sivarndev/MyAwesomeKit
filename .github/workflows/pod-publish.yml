@@ -1,0 +1,62 @@
+name: Build and Publish Pod
+
+on:
+  push:
+    tags:
+      - "*"
+
+env:
+  FRAMEWORK_NAME: "MyAwesomeKit"
+  DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+
+jobs:
+  build-and-publish:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch ${DEVELOPER_DIR}
+
+      - name: Install CocoaPods
+        run: gem install cocoapods
+
+      - name: Setup Git Configuration
+        run: |
+          git config --global user.email "ci@example.com"
+          git config --global user.name "CI Bot"
+
+      - name: Make scripts executable
+        run: |
+          chmod +x ./scripts/build_framework.sh
+          chmod +x ./scripts/generate_podspec.sh
+          chmod +x ./scripts/validate_pod.sh
+
+      - name: Build XCFramework
+        run: ./scripts/build_framework.sh ${{ env.FRAMEWORK_NAME }}
+
+      - name: Generate Podspec
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          ./scripts/generate_podspec.sh \
+            ${{ env.FRAMEWORK_NAME }} \
+            ${VERSION} \
+            "https://github.com/${GITHUB_REPOSITORY}" \
+            "CI Bot" \
+            "ci@example.com"
+
+      - name: Validate and Push Pod
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: |
+          ./scripts/validate_pod.sh ${{ env.FRAMEWORK_NAME }} true ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            output/${{ env.FRAMEWORK_NAME }}.xcframework
+            ${{ env.FRAMEWORK_NAME }}.podspec
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
