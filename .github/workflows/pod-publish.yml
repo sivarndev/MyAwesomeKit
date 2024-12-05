@@ -15,41 +15,42 @@ on:
 
 env:
   FRAMEWORK_NAME: "MyAwesomeKit"
-  DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+  XCODE_VERSION: "15.0"
 
 jobs:
   build-and-publish:
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Select Xcode
-        run: sudo xcode-select -switch ${DEVELOPER_DIR}
-
-      - name: Install CocoaPods
-        run: gem install cocoapods
-
-      - name: Make scripts executable
-        run: |
-          chmod +x ./scripts/build_framework.sh
-          chmod +x ./scripts/validate_pod.sh
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
 
       - name: Build XCFramework
-        run: ./scripts/build_framework.sh ${{ env.FRAMEWORK_NAME }}
+        run: |
+          chmod +x ./scripts/build_framework.sh
+          ./scripts/build_framework.sh ${{ env.FRAMEWORK_NAME }}
 
       - name: Create Git Tag
         run: |
           git tag ${{ inputs.version }}
           git push origin ${{ inputs.version }}
 
-      - name: Validate and Push Pod
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+      - name: Authenticate with Github Packages
         run: |
-          ./scripts/validate_pod.sh ${{ env.FRAMEWORK_NAME }} true ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+          echo "source 'https://rubygems.org'" > ~/.gemrc
+          bundle config --global ACCESS_PACKAGES_TOKEN ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Create GitHub Release
+      - name: Publish to Github Packages
+        run: |
+          pod repo push ACCESS-packages MyAwesomeKit.podspec --allow-warnings
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Create Github Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ inputs.version }}
@@ -59,4 +60,4 @@ jobs:
             output/${{ env.FRAMEWORK_NAME }}.xcframework
             ${{ env.FRAMEWORK_NAME }}.podspec
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
