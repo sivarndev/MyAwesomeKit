@@ -1,9 +1,17 @@
 name: Build and Publish Pod
 
 on:
-  push:
-    tags:
-      - "*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g., 1.0.0)"
+        required: true
+        type: string
+      release_notes:
+        description: "Release notes"
+        required: false
+        type: string
+        default: "New release"
 
 env:
   FRAMEWORK_NAME: "MyAwesomeKit"
@@ -22,29 +30,18 @@ jobs:
       - name: Install CocoaPods
         run: gem install cocoapods
 
-      - name: Setup Git Configuration
-        run: |
-          git config --global user.email "ci@example.com"
-          git config --global user.name "CI Bot"
-
       - name: Make scripts executable
         run: |
           chmod +x ./scripts/build_framework.sh
-          chmod +x ./scripts/generate_podspec.sh
           chmod +x ./scripts/validate_pod.sh
 
       - name: Build XCFramework
         run: ./scripts/build_framework.sh ${{ env.FRAMEWORK_NAME }}
 
-      - name: Generate Podspec
+      - name: Create Git Tag
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
-          ./scripts/generate_podspec.sh \
-            ${{ env.FRAMEWORK_NAME }} \
-            ${VERSION} \
-            "https://github.com/${GITHUB_REPOSITORY}" \
-            "CI Bot" \
-            "ci@example.com"
+          git tag ${{ inputs.version }}
+          git push origin ${{ inputs.version }}
 
       - name: Validate and Push Pod
         env:
@@ -55,6 +52,9 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ inputs.version }}
+          name: Release ${{ inputs.version }}
+          body: ${{ inputs.release_notes }}
           files: |
             output/${{ env.FRAMEWORK_NAME }}.xcframework
             ${{ env.FRAMEWORK_NAME }}.podspec
