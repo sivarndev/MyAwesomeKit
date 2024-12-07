@@ -1,0 +1,6 @@
+framework module MyAwesomeKit {
+  umbrella header "MyAwesomeKit.h"
+  export *
+
+  module * { export * }
+}

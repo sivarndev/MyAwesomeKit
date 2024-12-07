@@ -1,0 +1,95 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "MyAwesomeKit",
+    "printedName": "MyAwesomeKit",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "MyAwesomeKit",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "MyAwesomeKit",
+        "printedName": "MyAwesomeKit",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "sayHello",
+            "printedName": "sayHello()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:12MyAwesomeKitAAC8sayHelloSSyFZ",
+            "mangledName": "$s12MyAwesomeKitAAC8sayHelloSSyFZ",
+            "moduleName": "MyAwesomeKit",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "MyAwesomeKit",
+                "printedName": "MyAwesomeKit.MyAwesomeKit",
+                "usr": "s:12MyAwesomeKitAAC"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:12MyAwesomeKitAACABycfc",
+            "mangledName": "$s12MyAwesomeKitAACABycfc",
+            "moduleName": "MyAwesomeKit",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:12MyAwesomeKitAAC",
+        "mangledName": "$s12MyAwesomeKitAAC",
+        "moduleName": "MyAwesomeKit",
+        "declAttributes": [
+          "AccessControl"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": []
+}
