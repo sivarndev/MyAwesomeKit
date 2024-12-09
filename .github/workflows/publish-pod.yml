@@ -13,6 +13,9 @@ jobs:
       - name: Checkout MyAwesomeKit
         uses: actions/checkout@v3
 
+      - name: Select Latest Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
       - name: Get tag version
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
