@@ -9,7 +9,6 @@ mkdir -p "${ARCHIVES_DIR}" "${OUTPUT_DIR}"
 
 echo "🏗 Building ${FRAMEWORK_NAME} for iOS Simulator..."
 xcodebuild archive \
--workspace ${FRAMEWORK_NAME}.xcworkspace \
 -scheme ${FRAMEWORK_NAME} \
 -archivePath ${ARCHIVES_DIR}/simulator.xcarchive \
 -sdk iphonesimulator \
@@ -18,7 +17,6 @@ BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 
 echo "🏗 Building ${FRAMEWORK_NAME} for iOS Devices..."
 xcodebuild archive \
--workspace ${FRAMEWORK_NAME}.xcworkspace \
 -scheme ${FRAMEWORK_NAME} \
 -archivePath ${ARCHIVES_DIR}/ios.xcarchive \
 -sdk iphoneos \
