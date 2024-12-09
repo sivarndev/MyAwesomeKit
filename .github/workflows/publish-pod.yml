@@ -50,8 +50,8 @@ jobs:
         run: |
           cd MyAwesomeKitSpecs
           sed -i '' "s/s.version.*=.*/s.version          = '${{ steps.get_version.outputs.VERSION }}'/" MyAwesomeKit.podspec
-          grep "s.version" MyAwesomeKit.podspec 
-          
+          grep "s.version" MyAwesomeKit.podspec
+
       - name: Add Pod Repo
         run: |
           pod repo add MyAwesomeKitSpecs https://github.com/sivarndev/MyAwesomeKitSpecs.git
@@ -66,4 +66,5 @@ jobs:
 
       - name: Push Pod Repo
         run: |
+          cd MyAwesomeKitSpecs
           pod repo push MyAwesomeKitSpecs MyAwesomeKit.podspec --allow-warnings --verbose
