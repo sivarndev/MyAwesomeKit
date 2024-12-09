@@ -31,9 +31,16 @@ jobs:
           chmod +x ./scripts/build_framework_ci.sh
           ./scripts/build_framework_ci.sh
 
-      - name: Clone Specs Repo
+      - name: Git config
         run: |
-          git clone https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/sivarndev/MyAwesomeKitSpecs.git
+          git config --global user.email "siva.ping.here@gmail.com"
+          git config --global user.name "sivarndev"
+
+      - name: Clone Specs Repo
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: |
+          git clone https://x-access-token:$ACCESS_TOKEN@github.com/sivarndev/MyAwesomeKitSpecs.git || echo "ACCESS_TOKEN is not set"
 
       - name: Copy XCFramework
         run: |
@@ -43,7 +50,8 @@ jobs:
         run: |
           cd MyAwesomeKitSpecs
           sed -i '' "s/s.version.*=.*/s.version          = '${{ steps.get_version.outputs.VERSION }}'/" MyAwesomeKit.podspec
-
+          grep "s.version" MyAwesomeKit.podspec 
+          
       - name: Add Pod Repo
         run: |
           pod repo add MyAwesomeKitSpecs https://github.com/sivarndev/MyAwesomeKitSpecs.git
@@ -51,10 +59,8 @@ jobs:
       - name: Commit and Push to Specs Repo
         run: |
           cd MyAwesomeKitSpecs
-          git config --global user.email "siva.ping.here@gmail.com"
-          git config --global user.name "sivarndev"
-          git add .
-          git commit -m "Release ${{ steps.get_version.outputs.VERSION }}"
+          git add . -v
+          git commit -m "Release ${{ steps.get_version.outputs.VERSION }}" -v
           git tag ${{ steps.get_version.outputs.VERSION }}
           git push origin main --tags
 
