@@ -35,10 +35,9 @@ jobs:
         run: |
           git clone https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/sivarndev/MyAwesomeKitSpecs.git
 
-      - name: Copy XCFramework and Podspec
+      - name: Copy XCFramework
         run: |
           cp -R output/MyAwesomeKit.xcframework MyAwesomeKitSpecs/
-          cp MyAwesomeKit.podspec MyAwesomeKitSpecs/
 
       - name: Update Podspec Version
         run: |
