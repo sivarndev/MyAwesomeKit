@@ -7,9 +7,13 @@
 
 import Foundation
 
-public class MyAwesomeKit {
+public class MyAwesomeKitApi {
     public static func sayHello() -> String {
-        return "Hello from MyAwesomeKit!"
+        return "Hello from MyAwesomeKit! I am Sivasubramaniam :) "
+    }
+    
+    public static func sayHelloTo(name: String) -> String {
+        return "Hello \(name) from MyAwesomeKit! I am Sivasubramaniam :) "
     }
     
     public init() {}
