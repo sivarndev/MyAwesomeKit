@@ -28,8 +28,8 @@ jobs:
 
       - name: Build XCFramework
         run: |
-          chmod +x ./scripts/build_framework.sh
-          ./scripts/build_framework.sh
+          chmod +x ./scripts/build_framework_ci.sh
+          ./scripts/build_framework_ci.sh
 
       - name: Clone Specs Repo
         run: |
