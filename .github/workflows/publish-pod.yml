@@ -1,0 +1,56 @@
+name: Build and Publish Pod
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build-and-publish:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout MyAwesomeKit
+        uses: actions/checkout@v3
+
+      - name: Get tag version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+
+      - name: Install CocoaPods
+        run: gem install cocoapods
+
+      - name: Build XCFramework
+        run: |
+          chmod +x ./build_framework.sh
+          ./build_framework.sh
+
+      - name: Clone Specs Repo
+        run: |
+          git clone https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/sivarndev/MyAwesomeKitSpecs.git
+
+      - name: Copy XCFramework and Podspec
+        run: |
+          cp -R output/MyAwesomeKit.xcframework MyAwesomeKitSpecs/
+          cp MyAwesomeKit.podspec MyAwesomeKitSpecs/
+
+      - name: Update Podspec Version
+        run: |
+          cd MyAwesomeKitSpecs
+          sed -i '' "s/s.version.*=.*/s.version          = '${{ steps.get_version.outputs.VERSION }}'/" MyAwesomeKit.podspec
+
+      - name: Commit and Push to Specs Repo
+        run: |
+          cd MyAwesomeKitSpecs
+          git config --global user.email "siva.ping.here@gmail.com"
+          git config --global user.name "sivarndev"
+          git add .
+          git commit -m "Release ${{ steps.get_version.outputs.VERSION }}"
+          git tag ${{ steps.get_version.outputs.VERSION }}
+          git push origin main --tags
